@@ -3,7 +3,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
-
+/// <summary>
+/// Developed By: Mohamed Abdo
+///           On: 27 Aug 2017
+///             : apple pay cryptography helper
+/// </summary>
 namespace AgilePay.GeexGate.Api.Business.Rest.Helper
 {
     internal static class CertificateValidator
@@ -20,8 +24,6 @@ namespace AgilePay.GeexGate.Api.Business.Rest.Helper
         }
         internal static bool EnsureCertificateTrust(this X509Certificate2 trusterCertificate, X509Certificate2 certificateToValidate, Action<Exception> throwBusinessExceptoin)
         {
-            //TODO:// verify by iod
-
             //validate certificate
             try
             {

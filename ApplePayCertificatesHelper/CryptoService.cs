@@ -20,7 +20,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-
+/// <summary>
+/// Developed By: Mohamed Abdo
+///           On: 27 Aug 2017
+///             : apple pay cryptography helper
+/// </summary>
 namespace AgilePay.GeexGate.Api.Business.Rest.Helper
 {
     public class CryptoService
