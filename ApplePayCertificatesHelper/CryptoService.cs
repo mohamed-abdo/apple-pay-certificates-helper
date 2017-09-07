@@ -143,7 +143,7 @@ namespace AgilePay.GeexGate.Api.Business.Rest.Helper
             return new KeyValuePair<string, string>(csr, privateKey);
         };
 
-        private static AsymmetricCipherKeyPair GenerateECKeys(int keySize)
+        private static AsymmetricCipherKeyPair GenerateECCKeys(int keySize)
         {
             var gen = new ECKeyPairGenerator();
             var keyGenParam = new KeyGenerationParameters(new SecureRandom(), keySize);
