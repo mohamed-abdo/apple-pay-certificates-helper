@@ -25,6 +25,8 @@ Generate Pkcs12 Certificate signing request "CSR" with ECC 256 algorithm
 
 Generate Pkcs12 Certificate signing request "CSR" with RSA 2048 algorithm
 
+Generate PEM from RSA XML String
+
 Extract Public Key from Privarte key "base64 string" with ECC 256 algorithm
 
 Extract Public Key from Privarte key "base64 string" with RSA 2048 algorithm
