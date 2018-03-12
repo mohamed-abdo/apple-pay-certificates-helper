@@ -1,4 +1,4 @@
-﻿using ApplePayCertificatesHelper.Models;
+
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1.X9;
@@ -25,9 +25,9 @@ using System.Text;
 ///           On: 27 Aug 2017
 ///             : apple pay cryptography helper
 /// </summary>
-namespace AgilePay.GeexGate.Api.Business.Rest.Helper
+namespace Api.Business.Rest.Helper
 {
-    public class CryptoService
+     public class CryptoService
     {
         private const string ECC_ALG = "ECDSA";
         private const string RSA_SGN_ALG = "SHA256WithRSA";
@@ -124,14 +124,14 @@ namespace AgilePay.GeexGate.Api.Business.Rest.Helper
         };
 
         public static Func<CertificateProof, KeyValuePair<string, string>> GenerateECCCertificateRequest = (proofs) =>
-        {
-            var cipher = GenerateEllipticCurve256Key();
-            var csr = GenerateCSR(CreateECCPkcs10Certificate(
-                cipher,
-                GenerateCertificate(proofs)));
-            var privateKey = GetPrivateKey(cipher);
-            return new KeyValuePair<string, string>(csr, privateKey);
-        };
+         {
+             var cipher = GenerateEllipticCurve256Key();
+             var csr = GenerateCSR(CreateECCPkcs10Certificate(
+                 cipher,
+                 GenerateCertificate(proofs)));
+             var privateKey = GetPrivateKey(cipher);
+             return new KeyValuePair<string, string>(csr, privateKey);
+         };
 
         public static Func<CertificateProof, KeyValuePair<string, string>> GenerateRSACertificateRequest = (proofs) =>
         {
@@ -180,7 +180,7 @@ namespace AgilePay.GeexGate.Api.Business.Rest.Helper
             X9ECParameters curve = SecNamedCurves.GetByName("SecP256r1");//SecObjectIdentifiers.SecP256r1
             ECDomainParameters domainParams = new ECDomainParameters(curve.Curve, curve.G, curve.N, curve.H, curve.GetSeed());
             // Then calculate the public key only using domainParams.getG() and private key
-            Org.BouncyCastle.Math.EC.ECPoint Q = domainParams.G.Multiply(new BigInteger(privateKeyBytes));
+            ECPoint Q = domainParams.G.Multiply(new BigInteger(privateKeyBytes));
             return Q.GetEncoded();
         };
 
@@ -206,6 +206,21 @@ namespace AgilePay.GeexGate.Api.Business.Rest.Helper
             var publicKeyChiper = DotNetUtilities.GetRsaPublicKey((RSACryptoServiceProvider)publicKey.Key);
             return (publicKeyFromPrivateKey.Exponent.CompareTo(publicKeyChiper.Exponent) == 0 &&
                    publicKeyFromPrivateKey.Modulus.CompareTo(publicKeyChiper.Modulus) == 0);
+        };
+
+        public static Func<string, string> ToBase64PemFromKeyXMLString = (xmlPrivateKey) =>
+        {
+            if (string.IsNullOrEmpty(xmlPrivateKey))
+                throw new ArgumentNullException("RSA key must contains value!");
+            var keyContent = new PemReader(new StringReader(xmlPrivateKey));
+            if (keyContent == null)
+                throw new ArgumentNullException("private key is not valid!");
+            var ciphrPrivateKey = (AsymmetricCipherKeyPair)keyContent.ReadObject();
+            var asymmetricKey = new AsymmetricKeyEntry(ciphrPrivateKey.Private);
+
+            PrivateKeyInfo privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(asymmetricKey.Key);
+            var serializedPrivateKey = privateKeyInfo.ToAsn1Object().GetDerEncoded();
+            return Convert.ToBase64String(serializedPrivateKey);
         };
 
         public static Func<X509Certificate2, string, byte[]> ToRSAPkcs12Certificate = (certificateV2, privateKey) =>
